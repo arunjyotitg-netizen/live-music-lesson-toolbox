@@ -37,3 +37,10 @@ document.getElementById('resetSessionBtn').addEventListener('click',()=>{stopMet
   chordAudio.src='app9-chord-audio-fix.js?v=20260916a';
   document.body.appendChild(chordAudio);
 })();
+
+// Add tempo-synced drum grooves inside the Metronome tool for live jamming and practice.
+(()=>{
+  const jam=document.createElement('script');
+  jam.src='app10-jam-grooves.js?v=20260916a';
+  document.body.appendChild(jam);
+})();
