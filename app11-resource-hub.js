@@ -8,7 +8,22 @@
   nav.className='navbtn';
   nav.dataset.tool='resources';
   nav.innerHTML='📺 Resource Hub';
-  sidebar.appendChild(nav);
+  const metroNav=sidebar.querySelector('[data-tool="metro"]');
+  if(metroNav&&metroNav.nextSibling) sidebar.insertBefore(nav,metroNav.nextSibling);
+  else if(metroNav) sidebar.appendChild(nav);
+  else sidebar.appendChild(nav);
+
+  const topActions=document.querySelector('.launch-strip');
+  let topBtn=null;
+  if(topActions){
+    topBtn=document.createElement('button');
+    topBtn.className='btn soft teacher-only';
+    topBtn.id='resourceTopBtn';
+    topBtn.textContent='📺 Resources';
+    const full=document.getElementById('fullBtn');
+    if(full) topActions.insertBefore(topBtn,full);
+    else topActions.appendChild(topBtn);
+  }
 
   const panel=document.createElement('section');
   panel.className='panel';
@@ -49,11 +64,7 @@
         </div>
         <div class="resource-error" id="resourceError"></div>
         <div class="resource-player-wrap" id="resourcePlayerWrap">
-          <div class="resource-placeholder" id="resourcePlaceholder">
-            <div>▶</div>
-            <b>No video loaded yet</b>
-            <span>Paste a YouTube link above when you are ready to teach.</span>
-          </div>
+          <div class="resource-placeholder"><div>▶</div><b>No video loaded yet</b><span>Paste a YouTube link above when you are ready to teach.</span></div>
         </div>
         <div class="controls resource-player-actions">
           <button class="btn" id="resourceClearBtn">Clear Video</button>
@@ -61,9 +72,7 @@
         </div>
       </div>
     </div>
-    <div class="resource-share-tip">
-      <b>Screen-share tip:</b> in Zoom, Google Meet or your classroom platform, share this browser tab/window. If students need to hear the YouTube video, enable the platform's “share tab audio” or “share computer sound” option.
-    </div>`;
+    <div class="resource-share-tip"><b>Screen-share tip:</b> share this browser tab/window in Zoom, Meet or your classroom platform. Turn on share-tab audio or share-computer-sound when students need to hear the video.</div>`;
   content.appendChild(panel);
 
   const style=document.createElement('style');
@@ -95,6 +104,7 @@
     }
   }
   nav.addEventListener('click',openResourcePanel);
+  topBtn?.addEventListener('click',openResourcePanel);
 
   function runSearch(){
     const q=(searchInput.value||'').trim();
@@ -111,19 +121,19 @@
     try{
       const u=new URL(text);
       const host=u.hostname.replace(/^www\./,'');
-      if(host==='youtu.be') return u.pathname.split('/').filter(Boolean)[0]||'';
+      if(host==='youtu.be') return (u.pathname.split('/').filter(Boolean)[0]||'').slice(0,11);
       if(host.endsWith('youtube.com')){
-        const v=u.searchParams.get('v');if(v) return v;
+        const v=u.searchParams.get('v');if(v) return v.slice(0,11);
         const parts=u.pathname.split('/').filter(Boolean);
         const idx=parts.findIndex(x=>['embed','shorts','live'].includes(x));
-        if(idx>=0&&parts[idx+1]) return parts[idx+1];
+        if(idx>=0&&parts[idx+1]) return parts[idx+1].slice(0,11);
       }
     }catch(e){}
     return '';
   }
   function clearVideo(){
     currentVideoId='';
-    playerWrap.innerHTML='<div class="resource-placeholder" id="resourcePlaceholder"><div>▶</div><b>No video loaded yet</b><span>Paste a YouTube link above when you are ready to teach.</span></div>';
+    playerWrap.innerHTML='<div class="resource-placeholder"><div>▶</div><b>No video loaded yet</b><span>Paste a YouTube link above when you are ready to teach.</span></div>';
     openBtn.disabled=true;error.textContent='';
   }
   function loadVideo(){
@@ -135,7 +145,6 @@
     iframe.title='YouTube teaching resource';
     iframe.allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
     iframe.allowFullscreen=true;
-    iframe.referrerPolicy='strict-origin-when-cross-origin';
     playerWrap.innerHTML='';playerWrap.appendChild(iframe);openBtn.disabled=false;
   }
   document.getElementById('resourceLoadBtn').addEventListener('click',loadVideo);
