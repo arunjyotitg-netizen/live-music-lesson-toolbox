@@ -32,6 +32,9 @@ This project is designed for teacher-led online music classes. It is not a forma
 - Notation Learning
 - Live Whiteboard
 - Music Level-Up Game
+- Music Adventure / Treasure Hunt gamification
+- Expanded replayable question and audio bank
+- Recent-question memory to reduce repetition
 - Focus Mode and Full Screen
 - Session reset
 
@@ -41,8 +44,12 @@ This project is designed for teacher-led online music classes. It is not a forma
 - `style.css` — layout, colors, responsive design and component styling
 - `app1.js` — navigation, session setup, Teacher/Student View, lesson flow, timer, audio engine, live piano and ear trainer
 - `app2.js` — metronome, rhythm, vocal warm-ups, prompts, notation and whiteboard
-- `app3.js` — full Music Level-Up Game question banks and game logic
-- `app4.js` — session reset and shared cleanup logic
+- `app3.js` — core Music Level-Up Game question banks and game logic
+- `app4.js` — session reset plus ordered loading of game-extension modules
+- `app5-game-adventure.js` — Music Adventure path, treasure chest and game-only Treasure Points
+- `app6-question-jump.js` — character jump path placed inside the live question card
+- `app7-question-bank-expansion.js` — generated question/audio variants for replayable Basic, Intermediate and Advanced pools
+- `app8-replay-memory.js` — browser-side recent-question memory so replays prefer questions the student has not seen recently
 - `.nojekyll` — keeps GitHub Pages serving the project as plain static files
 
 ## Technical approach
@@ -92,7 +99,21 @@ It supports:
 - Keyboard
 - Western Vocals
 
-Each level/category has a bank of questions. Some challenges include generated audio. The current progress target is 10 correct answers per level.
+The original hand-written questions remain in `app3.js`. `app7-question-bank-expansion.js` adds a much larger replayable set of generated variations including note order, pitch identification, higher/lower listening, intervals, chord recognition, chord quality, accidentals, meter, notation, keyboard knowledge and vocal musicianship.
+
+Audio variants are generated from different MIDI pitches, intervals and chord voicings through the existing Web Audio engine. This means the wording may sometimes represent the same skill while the actual note or chord being heard changes.
+
+Before the visual game begins, `app4.js` validates the loaded bank so a question is not used if its stored answer is missing from its visible answer choices.
+
+The game deck is shuffled. `app8-replay-memory.js` remembers a small set of recently shown question signatures in browser `localStorage` and prefers unused questions first. The recent signature includes the question, answer and audio pitches, so different listening examples are treated as distinct variants.
+
+The current level goal remains 10 correct answers. This goal drives both the level progress and the character/treasure-hunt journey.
+
+### Game adventure and rewards
+
+`app5-game-adventure.js` adds the larger treasure journey and game-only reward system. `app6-question-jump.js` places a smaller journey directly inside the question card so the character visibly moves after correct answers.
+
+Treasure Points are limited to the game experience and are not intended to function as academic marks, assessment scores or overall student rankings.
 
 ### Vocal Warm-up Studio
 
@@ -131,10 +152,11 @@ Any update committed to the published branch may take a short time to appear on 
 4. Add saved lesson presets.
 5. Add ensemble tools for Keyboard, Vocals and Guitar.
 6. Add call-and-response rhythm playback.
-7. Add interval and chord ear-training modes.
-8. Add printable or shareable lesson activity cards.
-9. Add a teacher dashboard only if the company later wants accounts and stored data.
-10. Add accessibility and keyboard-navigation review for wider deployment.
+7. Add more advanced interval, chord and rhythm ear-training generators.
+8. Add character selection, map themes and treasure cosmetics to the game.
+9. Add printable or shareable lesson activity cards.
+10. Add a teacher dashboard only if the company later wants accounts and stored data.
+11. Add accessibility and keyboard-navigation review for wider deployment.
 
 ## Handoff guidance for a company or tech team
 
