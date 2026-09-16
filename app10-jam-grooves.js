@@ -73,7 +73,7 @@
   `;
   document.head.appendChild(st);
 
-  let audioCtx=null, master=null, timer=null, step=0, running=false;
+  let audioCtx=null,master=null,timer=null,step=0,running=false;
   function ensureAudio(){
     if(!audioCtx){
       const AC=window.AudioContext||window.webkitAudioContext;
@@ -89,7 +89,7 @@
   function level(){
     const intensity=document.getElementById('jamIntensity').value;
     const volume=Number(document.getElementById('jamVolume').value)/100;
-    const mul=intensity==='light'?.62:intensity==='full'?1.15:.88;
+    const mul=intensity==='light' ? 0.62 : (intensity==='full' ? 1.15 : 0.88);
     return Math.min(1.2,volume*mul);
   }
   function kick(t){
@@ -112,7 +112,8 @@
   }
   function hat(t,open=false){
     const src=audioCtx.createBufferSource(),filter=audioCtx.createBiquadFilter(),g=audioCtx.createGain();src.buffer=noiseBuffer();filter.type='highpass';filter.frequency.value=6500;
-    const dur=open?.18:.045;g.gain.setValueAtTime((open?.16:.1)*level(),t);g.gain.exponentialRampToValueAtTime(.001,t+dur);src.connect(filter);filter.connect(g);g.connect(master);src.start(t);src.stop(t+dur+.01);
+    const dur=open ? 0.18 : 0.045;
+    g.gain.setValueAtTime((open ? 0.16 : 0.10)*level(),t);g.gain.exponentialRampToValueAtTime(.001,t+dur);src.connect(filter);filter.connect(g);g.connect(master);src.start(t);src.stop(t+dur+.01);
   }
   function ride(t){
     [4200,5610,7300].forEach((f,i)=>{const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type='square';o.frequency.value=f;g.gain.setValueAtTime((.022-i*.004)*level(),t);g.gain.exponentialRampToValueAtTime(.001,t+.12);o.connect(g);g.connect(master);o.start(t);o.stop(t+.13);});
@@ -126,7 +127,11 @@
   }
   function drawSteps(){
     const p=pattern(),row=document.getElementById('jamStepRow');row.innerHTML='';
-    for(let i=0;i<p.steps;i++){const s=document.createElement('span');s.className='jam-step'+((p.unit==='sixteenth'&&i%4===0)||(p.unit==='triplet'&&i%3===0)||(p.unit==='eighth'&&i%3===0)?' beat':'');s.dataset.jamStep=i;row.appendChild(s);}
+    for(let i=0;i<p.steps;i++){
+      const s=document.createElement('span');
+      const strong=(p.unit==='sixteenth'&&i%4===0)||(p.unit==='triplet'&&i%3===0)||(p.unit==='eighth'&&i%3===0);
+      s.className='jam-step'+(strong?' beat':'');s.dataset.jamStep=i;row.appendChild(s);
+    }
   }
   function refreshInfo(){
     const p=pattern();document.getElementById('jamStyleName').textContent=p.name;document.getElementById('jamMeterText').textContent=p.meter;document.getElementById('jamDescription').textContent=p.desc;document.getElementById('jamTempoReadout').textContent=bpmInput.value;drawSteps();step=0;
@@ -135,11 +140,21 @@
   }
   function flashStep(i){document.querySelectorAll('.jam-step').forEach(s=>s.classList.toggle('on',Number(s.dataset.jamStep)===i));}
   function tick(){
-    if(!running) return;const p=pattern(),now=audioCtx.currentTime+.01,s=step%p.steps;flashStep(s);
-    if(p.kick?.includes(s)) kick(now);if(p.snare?.includes(s)) snare(now);if(p.hat?.includes(s)) hat(now,false);if(p.openHat?.includes(s)) hat(now,true);if(p.ride?.includes(s)) ride(now);
-    step=(s+1)%p.steps;timer=setTimeout(tick,stepMs());
+    if(!running) return;
+    const p=pattern(),now=audioCtx.currentTime+.01,s=step%p.steps;flashStep(s);
+    if(p.kick?.includes(s)) kick(now);
+    if(p.snare?.includes(s)) snare(now);
+    if(p.hat?.includes(s)) hat(now,false);
+    if(p.openHat?.includes(s)) hat(now,true);
+    if(p.ride?.includes(s)) ride(now);
+    step=(s+1)%p.steps;
+    timer=setTimeout(tick,stepMs());
   }
-  function stop(){running=false;if(timer)clearTimeout(timer);timer=null;step=0;document.getElementById('jamStart').textContent='▶ Start Groove';document.querySelectorAll('.jam-step').forEach(s=>s.classList.remove('on'));}
+  function stop(){
+    running=false;if(timer) clearTimeout(timer);timer=null;step=0;
+    document.getElementById('jamStart').textContent='▶ Start Groove';
+    document.querySelectorAll('.jam-step').forEach(s=>s.classList.remove('on'));
+  }
   function start(){
     if(!ensureAudio()) return;
     if(typeof stopMetro==='function') stopMetro();
@@ -147,12 +162,10 @@
   }
   document.getElementById('jamStart').addEventListener('click',()=>running?stop():start());
   document.getElementById('jamStyle').addEventListener('change',()=>{const was=running;stop();refreshInfo();if(was)start();});
-  document.getElementById('jamIntensity').addEventListener('change',()=>{});
-  document.getElementById('jamVolume').addEventListener('input',()=>{});
   document.getElementById('jamSlower').addEventListener('click',()=>{bpmInput.value=Math.max(40,Number(bpmInput.value)-5);bpmInput.dispatchEvent(new Event('input',{bubbles:true}));});
   document.getElementById('jamFaster').addEventListener('click',()=>{bpmInput.value=Math.min(200,Number(bpmInput.value)+5);bpmInput.dispatchEvent(new Event('input',{bubbles:true}));});
   bpmInput.addEventListener('input',()=>document.getElementById('jamTempoReadout').textContent=bpmInput.value);
-  document.getElementById('metroBtn')?.addEventListener('click',()=>{if(running)stop();});
+  document.getElementById('metroBtn')?.addEventListener('click',()=>{if(running) stop();});
   document.getElementById('resetSessionBtn')?.addEventListener('click',()=>{stop();document.getElementById('jamStyle').value='classic';document.getElementById('jamIntensity').value='normal';document.getElementById('jamVolume').value='70';refreshInfo();});
   refreshInfo();
 })();
