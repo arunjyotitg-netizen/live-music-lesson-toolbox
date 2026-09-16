@@ -30,3 +30,10 @@ document.getElementById('resetSessionBtn').addEventListener('click',()=>{stopMet
   };
   document.body.appendChild(bank);
 })();
+
+// Fix and extend audio playback for Notation Learning > Chord Symbols.
+(()=>{
+  const chordAudio=document.createElement('script');
+  chordAudio.src='app9-chord-audio-fix.js?v=20260916a';
+  document.body.appendChild(chordAudio);
+})();
