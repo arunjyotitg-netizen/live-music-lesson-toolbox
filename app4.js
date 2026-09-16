@@ -5,7 +5,6 @@ document.getElementById('resetSessionBtn').addEventListener('click',()=>{stopMet
   const bank=document.createElement('script');
   bank.src='app7-question-bank-expansion.js?v=20260916b';
   bank.onload=()=>{
-    // Do not allow an impossible question into a live student game: every stored answer must be one of its visible choices.
     try{
       Object.values(gameBank).forEach(group=>{
         Object.keys(group).forEach(cat=>{
@@ -48,6 +47,6 @@ document.getElementById('resetSessionBtn').addEventListener('click',()=>{stopMet
 // Add a teacher-controlled external resource hub with YouTube search launch and embedded playback.
 (()=>{
   const resources=document.createElement('script');
-  resources.src='app11-resource-hub.js?v=20260916a';
+  resources.src='app11-resource-hub.js?v=20260916b';
   document.body.appendChild(resources);
 })();
