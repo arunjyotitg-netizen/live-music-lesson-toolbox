@@ -47,6 +47,6 @@ document.getElementById('resetSessionBtn').addEventListener('click',()=>{stopMet
 // Add a teacher-controlled external resource hub with YouTube search launch and embedded playback.
 (()=>{
   const resources=document.createElement('script');
-  resources.src='app11-resource-hub.js?v=20260916b';
+  resources.src='app11-resource-hub.js?v=20260916c';
   document.body.appendChild(resources);
 })();
