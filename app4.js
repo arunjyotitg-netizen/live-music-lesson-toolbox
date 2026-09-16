@@ -37,10 +37,10 @@ document.getElementById('resetSessionBtn').addEventListener('click',()=>{stopMet
   document.body.appendChild(chordAudio);
 })();
 
-// Add tempo-synced drum grooves inside the Metronome tool for live jamming and practice.
+// Add tempo-synced drum grooves with selectable 2/4, 3/4, 4/4 and 6/8 meters.
 (()=>{
   const jam=document.createElement('script');
-  jam.src='app10-jam-grooves.js?v=20260916a';
+  jam.src='app10-jam-grooves.js?v=20260916b';
   document.body.appendChild(jam);
 })();
 
