@@ -1,4 +1,13 @@
 document.getElementById('resetSessionBtn').addEventListener('click',()=>{stopMetro();stopTimer();timerMinutes.value='5';setTimerFromSelect();ageSel.value='5–8';catSel.value='Keyboard';lessonName.value='Live lesson';presetSel.value='custom';document.getElementById('sessionSummary').textContent='Age 5–8 • Keyboard • Live lesson';updateLessonFlow();document.getElementById('earDisplay').textContent='?';document.getElementById('earFeedback').textContent='Choose a range and play a hidden note.';document.getElementById('pianoReadout').textContent='Click a key or use your computer keyboard.';document.getElementById('rhythmLevel').value='simple';document.getElementById('rhythmText').textContent='TA • TA • TI-TI • TA';document.getElementById('startNote').value='C';currentPattern='12321';document.getElementById('vocalPattern').value='12321';document.getElementById('vocalSyllable').value='Ah';document.getElementById('vocalTempo').value='76';refreshWarm();document.getElementById('promptText').textContent='Play or sing three notes going upward.';notationMode.value='notes';notationClef.value='treble';notationLevel.value='basic';renderNotation();if(boardReady){boardHistory=[];document.getElementById('boardTemplate').value='blank';drawBoardBackground();}gameLevel='basic';gameCorrect=0;gameDeck=[];challengeAnswered=false;restoreGameCompleteUI();document.getElementById('gameCategory').value='mixed';document.querySelectorAll('.level-btn').forEach(x=>x.classList.toggle('active',x.dataset.level==='basic'));document.getElementById('challengeQuestion').textContent='Press “Start Challenge” to begin.';document.getElementById('gameOptions').innerHTML='';document.getElementById('gameResult').textContent='';document.getElementById('levelComplete').classList.remove('show');updateGameUI();if(app.classList.contains('student-view')){app.classList.remove('student-view');document.getElementById('viewModeBtn').textContent='Student View';}openTool('home');});
 
-// Game adventure is kept in a separate module so future developers can extend it without disturbing the core question bank.
-(()=>{const s=document.createElement('script');s.src='app5-game-adventure.js?v=20260916';s.defer=true;document.body.appendChild(s);})();
+// Game adventure modules are kept separate so future developers can extend them without disturbing the core question bank.
+(()=>{
+  const adventure=document.createElement('script');
+  adventure.src='app5-game-adventure.js?v=20260916b';
+  adventure.onload=()=>{
+    const questionJump=document.createElement('script');
+    questionJump.src='app6-question-jump.js?v=20260916b';
+    document.body.appendChild(questionJump);
+  };
+  document.body.appendChild(adventure);
+})();
