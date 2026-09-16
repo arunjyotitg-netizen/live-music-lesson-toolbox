@@ -44,3 +44,10 @@ document.getElementById('resetSessionBtn').addEventListener('click',()=>{stopMet
   jam.src='app10-jam-grooves.js?v=20260916a';
   document.body.appendChild(jam);
 })();
+
+// Add a teacher-controlled external resource hub with YouTube search launch and embedded playback.
+(()=>{
+  const resources=document.createElement('script');
+  resources.src='app11-resource-hub.js?v=20260916a';
+  document.body.appendChild(resources);
+})();
