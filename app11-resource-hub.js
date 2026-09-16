@@ -52,12 +52,12 @@
           <button class="resource-chip" data-resource-query="piano ear training intervals beginner">Ear training</button>
           <button class="resource-chip" data-resource-query="6/8 drum backing track slow">6/8 practice</button>
         </div>
-        <div class="resource-note">After choosing a video on YouTube, copy its link and paste it below.</div>
+        <div class="resource-note">Choose a video on YouTube, copy its link, then return here and paste it below.</div>
       </div>
       <div class="resource-card">
         <div class="resource-kicker">STEP 2 • LOAD</div>
         <h3>Play the video here</h3>
-        <p>Paste a normal YouTube, youtu.be, Shorts, or embed link. The selected video will play inside this toolbox.</p>
+        <p>Paste a normal YouTube, youtu.be, Shorts, Live, or embed link. The selected video will play inside this toolbox when embedding is allowed by that video.</p>
         <div class="resource-search-row">
           <input id="resourceUrl" type="url" placeholder="Paste YouTube video link" autocomplete="off"/>
           <button class="btn primary" id="resourceLoadBtn">Load Video</button>
@@ -96,12 +96,14 @@
   const openBtn=document.getElementById('resourceOpenBtn');
   let currentVideoId='';
 
+  // Dynamic tools are added after app1.js captured its original nav/panel arrays,
+  // so this module must switch panels using live DOM queries instead of openTool().
   function openResourcePanel(){
-    if(typeof openTool==='function') openTool('resources');
-    else{
-      document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active',p.id==='resources'));
-      document.querySelectorAll('.navbtn').forEach(b=>b.classList.toggle('active',b===nav));
-    }
+    document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+    document.querySelectorAll('.navbtn').forEach(b=>b.classList.remove('active'));
+    panel.classList.add('active');
+    nav.classList.add('active');
+    panel.scrollIntoView({block:'start'});
   }
   nav.addEventListener('click',openResourcePanel);
   topBtn?.addEventListener('click',openResourcePanel);
@@ -109,7 +111,10 @@
   function runSearch(){
     const q=(searchInput.value||'').trim();
     if(!q){searchInput.focus();return;}
-    window.open('https://www.youtube.com/results?search_query='+encodeURIComponent(q),'_blank','noopener,noreferrer');
+    const searchUrl='https://www.youtube.com/results?search_query='+encodeURIComponent(q);
+    const win=window.open(searchUrl,'_blank');
+    if(win) win.opener=null;
+    else error.textContent='Your browser blocked the new YouTube tab. Allow pop-ups for this toolbox, then try again.';
   }
   document.getElementById('resourceSearchBtn').addEventListener('click',runSearch);
   searchInput.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();runSearch();}});
@@ -141,15 +146,16 @@
     if(!id){error.textContent='Please paste a valid YouTube video link.';return;}
     currentVideoId=id;error.textContent='';
     const iframe=document.createElement('iframe');
-    iframe.src='https://www.youtube.com/embed/'+encodeURIComponent(id)+'?rel=0&playsinline=1';
+    iframe.src='https://www.youtube-nocookie.com/embed/'+encodeURIComponent(id)+'?rel=0&playsinline=1';
     iframe.title='YouTube teaching resource';
     iframe.allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
     iframe.allowFullscreen=true;
+    iframe.referrerPolicy='strict-origin-when-cross-origin';
     playerWrap.innerHTML='';playerWrap.appendChild(iframe);openBtn.disabled=false;
   }
   document.getElementById('resourceLoadBtn').addEventListener('click',loadVideo);
   urlInput.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();loadVideo();}});
   document.getElementById('resourceClearBtn').addEventListener('click',clearVideo);
-  openBtn.addEventListener('click',()=>{if(currentVideoId)window.open('https://www.youtube.com/watch?v='+encodeURIComponent(currentVideoId),'_blank','noopener,noreferrer');});
+  openBtn.addEventListener('click',()=>{if(currentVideoId){const win=window.open('https://www.youtube.com/watch?v='+encodeURIComponent(currentVideoId),'_blank');if(win)win.opener=null;}});
   document.getElementById('resetSessionBtn')?.addEventListener('click',()=>{searchInput.value='';urlInput.value='';clearVideo();});
 })();
