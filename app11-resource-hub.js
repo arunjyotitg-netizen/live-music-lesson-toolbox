@@ -108,6 +108,17 @@
   nav.addEventListener('click',openResourcePanel);
   topBtn?.addEventListener('click',openResourcePanel);
 
+  // app1.js captured the original nav/panel lists before Resource Hub was added.
+  // Close this dynamic panel whenever the teacher chooses any other sidebar tool.
+  // Without this, Resource Hub can remain active underneath/alongside the next tool.
+  sidebar.addEventListener('click',e=>{
+    const btn=e.target.closest?.('.navbtn');
+    if(btn&&btn!==nav){
+      panel.classList.remove('active');
+      nav.classList.remove('active');
+    }
+  });
+
   function runSearch(){
     const q=(searchInput.value||'').trim();
     if(!q){searchInput.focus();return;}
