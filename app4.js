@@ -54,6 +54,6 @@ document.getElementById('resetSessionBtn').addEventListener('click',()=>{stopMet
 // Improve chord staff notation and make the Home Start / Update Session button begin the selected lesson.
 (()=>{
   const polish=document.createElement('script');
-  polish.src='app12-notation-session-fix.js?v=20260928a';
+  polish.src='app12-notation-session-fix.js?v=20260928b';
   document.body.appendChild(polish);
 })();
