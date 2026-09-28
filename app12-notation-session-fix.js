@@ -45,9 +45,10 @@
   }
 
   function getBaseSymbol(){
-    if(graphic?.dataset.chordSymbol&&CHORDS[graphic.dataset.chordSymbol]) return graphic.dataset.chordSymbol;
     const txt=(graphic?.textContent||'').trim();
-    return CHORDS[txt]?txt:'';
+    if(CHORDS[txt]) return txt;
+    if(graphic?.dataset.chordSymbol&&CHORDS[graphic.dataset.chordSymbol]) return graphic.dataset.chordSymbol;
+    return '';
   }
 
   function drawChordOnStaff(symbol){
